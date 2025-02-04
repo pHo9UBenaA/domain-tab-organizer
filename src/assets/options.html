@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Domain Tab Organizer Options</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 20px;
+      }
+      form {
+        max-width: 400px;
+      }
+      label {
+        display: block;
+        margin-top: 10px;
+      }
+      input[type="checkbox"] {
+        margin-right: 5px;
+      }
+      textarea {
+        grid-column: span 2;
+        width: 100%;
+        height: 80px;
+        margin-top: 5px;
+      }
+      button {
+        grid-column: span 2;
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Domain Tab Organizer Options</h1>
+    <form id="optionsForm">
+      <label>
+        <input type="checkbox" id="groupPinned">
+        Group pinned tabs
+      </label>
+      <label>
+        <input type="checkbox" id="regroupExisting">
+        Automatically regroup existing groups
+      </label>
+      <label>
+        <input type="checkbox" id="mergeSubdomains" checked>
+        Merge subdomains (if unchecked, treat separately)
+      </label>
+      <label>
+        Domain exceptions (comma-separated, e.g., example.com, another.com):
+        <textarea
+          id="domainExceptions"
+          placeholder="example.com, another.com"
+        ></textarea>
+      </label>
+      <button type="submit">Save Options</button>
+      <p id="status"></p>
+    </form>
+    <script src="options.js"></script>
+  </body>
+</html>

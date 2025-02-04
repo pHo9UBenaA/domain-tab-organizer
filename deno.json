@@ -1,9 +1,9 @@
 {
   "tasks": {
-    "dev": "echo \"deno run --watch main.ts\"",
+    "build": "deno run -A build.ts",
+    "build:prod": "deno run -A build.ts --minify",
     "format": "deno fmt",
-    "lint": "deno lint",
-    "executer": "deno --no-lock -A"
+    "lint": "deno lint"
   },
   "imports": {},
   "compilerOptions": {

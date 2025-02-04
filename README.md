@@ -1,63 +1,58 @@
-# My Deno Template
+# Domain Tab Organizer
 
-A template repository for projects using Deno.
-
-## Overview
-
-This template provides basic settings and a recommended directory structure to
-help you quickly start your Deno project.
+A Chrome extension that automatically groups tabs by domain, keeping your
+workspace organized.
 
 ## Features
 
-- **Development Environment Setup**: Includes configuration files for VSCode
-  (`.vscode`) and DevContainer (`.devcontainer`) to support a smooth development
-  environment setup.
-- **Deno Configuration**: Comes with a `deno.json` file to easily manage your
-  Deno settings.
-- **GitHub Template**: This repository is set as a GitHub template, making it
-  easy to use as a base for new projects.
+- Automatically group tabs by domain in the current window.
+- Keyboard shortcuts for quick actions:
+  - Group tabs: Ctrl+Shift+U (or Command+Shift+U on Mac)
+  - Delete the active tab group: Ctrl+Shift+E (or Command+Shift+E on Mac)
+- Customizable options include:
+  - Whether to group pinned tabs
+  - Whether to regroup tabs in existing groups
+  - Whether to merge subdomains into a single group
+  - Specifying exception domains to skip grouping
 
-## Usage
+## Important Information
 
-1. **Create a Repository**:
-   - Use this template to create a new repository.
+1. If the keyboard shortcuts do not work as expected, please visit
+   `chrome://extensions/shortcuts` and reassign the keys.
+2. You can customize the grouping behavior via the extension's options page.
 
-2. **Install Dependencies**:
-   - Since Deno directly imports external modules, no special installation steps
-     are required.
+## Installation
 
-3. **Run Scripts**:
-   - Use the following command to run Deno scripts:
+You can install the extension from the [Chrome Web Store]() or load it as an
+unpacked extension:
 
-     ```bash
-     deno run -A your_script.ts
-     ```
+1. Clone the repository.
+2. Build the extension using the instructions in the **Development** section.
+3. Open Chrome and navigate to `chrome://extensions`.
+4. Enable Developer Mode.
+5. Click "Load unpacked" and select the `dist` folder generated during the build
+   process.
 
-## Development Environment Setup
+## Development
 
-- **Deprecation of DevContainer**:
-  - While this repository includes a DevContainer configuration to quickly set
-    up a development environment, it is considered **deprecated** for the
-    following reasons:
-    - **Overhead from Virtual Layers**: Using DevContainer adds extra resource
-      requirements, which can result in slower performance.
-    - **Limited Benefits**: Deno is lightweight and easy to configure, making it
-      unnecessary to rely on DevContainer for most use cases. A direct local
-      development setup is recommended for a simpler and more efficient
-      experience.
-  - You can safely remove the DevContainer configuration if it is not needed for
-    your workflow.
+### Prerequisites
 
-## Contribution
+- Ensure you have [Deno](https://deno.land/#installation) installed.
 
-Contributions are welcome! Please follow these steps:
+### Without Containers
 
-1. Fork this repository.
-2. Create a new branch.
-3. Commit your changes.
-4. Submit a pull request.
+1. Clone the repository and navigate to its root directory.
+2. Build the extension:
+   ```bash
+   deno task build
+   ```
+   For a production build with minification:
+   ```bash
+   deno task build:prod
+   ```
+3. The build output will be located in the `dist` directory.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](./LICENSE)
-file for details.
+This project is licensed under the [MIT License](LICENSE). See the license file
+for more details.

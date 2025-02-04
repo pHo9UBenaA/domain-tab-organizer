@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Domain Tab Organizer",
+  "version": "0.1.0",
+  "description": "Groups tabs by domain automatically via shortcuts",
+  "permissions": [
+    "tabs",
+    "storage",
+    "tabGroups"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_page": "options.html",
+  "commands": {
+    "group-tabs": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+U"
+      },
+      "description": "Group tabs by domain"
+    },
+    "delete-tab-group": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+E"
+      },
+      "description": "Delete the tab group of the active tab"
+    }
+  }
+}
