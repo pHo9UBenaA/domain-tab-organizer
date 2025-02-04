@@ -1,6 +1,7 @@
 # Domain Tab Organizer
 
-A Chrome extension that automatically groups tabs by domain, keeping your workspace organized.
+A Chrome extension that automatically groups tabs by domain, keeping your
+workspace organized.
 
 ## Features
 
@@ -16,18 +17,21 @@ A Chrome extension that automatically groups tabs by domain, keeping your worksp
 
 ## Important Information
 
-1. If the keyboard shortcuts do not work as expected, please visit `chrome://extensions/shortcuts` and reassign the keys.
+1. If the keyboard shortcuts do not work as expected, please visit
+   `chrome://extensions/shortcuts` and reassign the keys.
 2. You can customize the grouping behavior via the extension's options page.
 
 ## Installation
 
-You can install the extension from the [Chrome Web Store]() or load it as an unpacked extension:
+You can install the extension from the [Chrome Web Store]() or load it as an
+unpacked extension:
 
 1. Clone the repository.
 2. Build the extension using the instructions in the **Development** section.
 3. Open Chrome and navigate to `chrome://extensions`.
 4. Enable Developer Mode.
-5. Click "Load unpacked" and select the `dist` folder generated during the build process.
+5. Click "Load unpacked" and select the `dist` folder generated during the build
+   process.
 
 ## Development
 
@@ -50,4 +54,5 @@ You can install the extension from the [Chrome Web Store]() or load it as an unp
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE). See the license file for more details.
+This project is licensed under the [MIT License](LICENSE). See the license file
+for more details.
