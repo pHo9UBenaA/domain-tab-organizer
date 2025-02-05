@@ -68,6 +68,9 @@ const moveUngroupedTabsToRightSide = async () => {
   const ungroupedTabIds = ungroupedTabs.map((tab) => tab.id).filter((id) =>
     id !== undefined
   );
+  if (ungroupedTabIds.length === 0) {
+    return;
+  }
   chrome.tabs.move(ungroupedTabIds, { index: RIGHT_SIDE_TAB_INDEX });
 };
 
