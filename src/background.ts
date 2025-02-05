@@ -1,5 +1,11 @@
 /// <reference types="npm:@types/chrome" />
 
+import { DEFAULT_OPTIONS, LOCAL_STORAGE_KEYS } from "./constant.ts";
+import { DeletionRecord } from "./interface.ts";
+
+const UNGROUPED_LABEL = "<Null>";
+const RIGHT_SIDE_TAB_INDEX = 9999;
+
 const getGroupName = (url: string, mergeSubdomains: boolean) => {
   try {
     let hostname = new URL(url).hostname;
@@ -8,7 +14,7 @@ const getGroupName = (url: string, mergeSubdomains: boolean) => {
     }
 
     if (!mergeSubdomains) {
-      return hostname.replace(/\./g, "-");
+      return hostname;
     }
 
     const parts = hostname.split(".");
@@ -17,23 +23,20 @@ const getGroupName = (url: string, mergeSubdomains: boolean) => {
       return parts[parts.length - 2];
     }
     return hostname;
-  } catch (error) {
-    console.error("Error extracting group name:", error);
+  } catch (_) {
     return null;
   }
 };
 
 const getOptions = async () => {
-  return await chrome.storage.sync.get({
-    groupPinned: false, // ピン留めタブはグループ化しない（デフォルト）
-    regroupExisting: false, // 既存のグループはそのままにする（デフォルト）
-    mergeSubdomains: true, // サブドメインをマージする（デフォルト）
-    domainExceptions: [], // 例外ドメイン
-  });
+  return await chrome.storage.sync.get(DEFAULT_OPTIONS);
 };
 
 const moveTabsToGroup = async (groups: Record<string, number[]>) => {
-  const existingGroups = await chrome.tabGroups.query({});
+  const currentWindow = await chrome.windows.getCurrent();
+  const existingGroups = await chrome.tabGroups.query({
+    windowId: currentWindow.id,
+  });
 
   for (const groupName in groups) {
     const tabIds = groups[groupName];
@@ -53,6 +56,22 @@ const moveTabsToGroup = async (groups: Record<string, number[]>) => {
       });
     }
   }
+};
+
+/**
+ * グループ化したタブを左側に寄せたいため、グループ化されていないタブを左側に移動する
+ * グループ化したタブを index: 0 に移動すると、ピン留めされたタブが存在する場合にエラーになるため、グループ化されていないタブを index: 9999 に移動している
+ */
+const moveUngroupedTabsToRightSide = async () => {
+  const tabs = await chrome.tabs.query({ currentWindow: true, pinned: false });
+  const ungroupedTabs = tabs.filter((tab) => tab.groupId === -1);
+  const ungroupedTabIds = ungroupedTabs.map((tab) => tab.id).filter((id) =>
+    id !== undefined
+  );
+  if (ungroupedTabIds.length === 0) {
+    return;
+  }
+  chrome.tabs.move(ungroupedTabIds, { index: RIGHT_SIDE_TAB_INDEX });
 };
 
 const groupTabsByDomain = async () => {
@@ -91,6 +110,18 @@ const groupTabsByDomain = async () => {
   }
 
   await moveTabsToGroup(groups);
+  await moveUngroupedTabsToRightSide();
+};
+
+const updateDeletionHistory = async (
+  windowType: keyof typeof LOCAL_STORAGE_KEYS,
+  record: DeletionRecord,
+) => {
+  const key = LOCAL_STORAGE_KEYS[windowType];
+  const histories = await chrome.storage.local.get(key);
+  const history = histories[key] || [];
+  history.unshift(record);
+  await chrome.storage.local.set({ [key]: history });
 };
 
 const deleteTabGroup = async () => {
@@ -104,9 +135,26 @@ const deleteTabGroup = async () => {
     return;
   }
 
+  const currentWindow = await chrome.windows.getCurrent();
+  const windowType: keyof typeof LOCAL_STORAGE_KEYS = currentWindow.incognito
+    ? "incognito"
+    : "normal";
+
   // タブがタブグループに属していない場合は groupId が -1 になるっぽい
   if (activeTab.groupId === -1) {
     chrome.tabs.remove(activeTab.id);
+
+    const deletionRecord = {
+      timestamp: Date.now(),
+      groupName: UNGROUPED_LABEL,
+      windowType,
+      tabs: [{
+        url: activeTab.url ?? "",
+        title: activeTab.title ?? "",
+      }],
+    };
+
+    updateDeletionHistory(windowType, deletionRecord);
     return;
   }
 
@@ -117,6 +165,25 @@ const deleteTabGroup = async () => {
 
   const tabIds = groupTabs.map((tab) => tab.id!);
   chrome.tabs.remove(tabIds);
+
+  // 現在のウィンドウ内のタブグループ一覧からグループ名を取得する
+  const existingGroups = await chrome.tabGroups.query({
+    windowId: currentWindow.id,
+  });
+  const existingGroup = existingGroups.find((group) => group.id === groupId);
+  const groupName = existingGroup ? existingGroup.title : UNGROUPED_LABEL;
+
+  const deletionRecord = {
+    timestamp: Date.now(),
+    groupName: groupName ?? UNGROUPED_LABEL,
+    windowType,
+    tabs: groupTabs.map((tab) => ({
+      url: tab.url ?? "",
+      title: tab.title ?? "",
+    })),
+  };
+
+  updateDeletionHistory(windowType, deletionRecord);
 };
 
 // キーボードショートカットのイベントリスナー
