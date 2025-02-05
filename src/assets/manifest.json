@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Domain Tab Organizer",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Groups tabs by domain automatically via shortcuts",
   "permissions": [
     "tabs",
@@ -24,7 +24,7 @@
     },
     "delete-tab-group": {
       "suggested_key": {
-        "default": "Ctrl+Shift+E"
+        "default": "Ctrl+E"
       },
       "description": "Delete the tab group of the active tab"
     }
