@@ -1,5 +1,6 @@
 /// <reference types="npm:@types/chrome" />
 
+import { DEFAULT_OPTIONS } from "./constant.ts";
 import { DeletionRecord } from "./interface.ts";
 
 const groupPinnedElement = <HTMLInputElement> document.getElementById(
@@ -19,12 +20,7 @@ const domainExceptionsElement = <HTMLTextAreaElement> document.getElementById(
 );
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const data = await chrome.storage.sync.get({
-    groupPinned: false,
-    regroupExisting: false,
-    mergeSubdomains: true,
-    domainExceptions: [],
-  });
+  const data = await chrome.storage.sync.get(DEFAULT_OPTIONS);
 
   if (groupPinnedElement) {
     groupPinnedElement.checked = data.groupPinned;

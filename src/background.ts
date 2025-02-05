@@ -1,10 +1,10 @@
 /// <reference types="npm:@types/chrome" />
 
+import { DEFAULT_OPTIONS, LOCAL_STORAGE_KEYS } from "./constant.ts";
 import { DeletionRecord } from "./interface.ts";
 
-const RIGHT_SIDE_INDEX = 9999;
-const HISTORY_KEY = "deletionHistory";
-const NONE_GROUP_NAME = "<Null>";
+const UNGROUPED_LABEL = "<Null>";
+const RIGHT_SIDE_TAB_INDEX = 9999;
 
 const getGroupName = (url: string, mergeSubdomains: boolean) => {
   try {
@@ -14,7 +14,7 @@ const getGroupName = (url: string, mergeSubdomains: boolean) => {
     }
 
     if (!mergeSubdomains) {
-      return hostname.replace(/\./g, "-");
+      return hostname;
     }
 
     const parts = hostname.split(".");
@@ -23,19 +23,13 @@ const getGroupName = (url: string, mergeSubdomains: boolean) => {
       return parts[parts.length - 2];
     }
     return hostname;
-  } catch (error) {
-    console.error("Error extracting group name:", error);
+  } catch (_) {
     return null;
   }
 };
 
 const getOptions = async () => {
-  return await chrome.storage.sync.get({
-    groupPinned: false, // ピン留めタブはグループ化しない（デフォルト）
-    regroupExisting: false, // 既存のグループはそのままにする（デフォルト）
-    mergeSubdomains: false, // サブドメインをマージしない（デフォルト）
-    domainExceptions: [], // 例外ドメイン
-  });
+  return await chrome.storage.sync.get(DEFAULT_OPTIONS);
 };
 
 const moveTabsToGroup = async (groups: Record<string, number[]>) => {
@@ -74,8 +68,7 @@ const moveUngroupedTabsToRightSide = async () => {
   const ungroupedTabIds = ungroupedTabs.map((tab) => tab.id).filter((id) =>
     id !== undefined
   );
-  console.log(ungroupedTabs);
-  chrome.tabs.move(ungroupedTabIds, { index: RIGHT_SIDE_INDEX });
+  chrome.tabs.move(ungroupedTabIds, { index: RIGHT_SIDE_TAB_INDEX });
 };
 
 const groupTabsByDomain = async () => {
@@ -118,10 +111,10 @@ const groupTabsByDomain = async () => {
 };
 
 const updateDeletionHistory = async (
-  windowType: string,
+  windowType: keyof typeof LOCAL_STORAGE_KEYS,
   record: DeletionRecord,
 ) => {
-  const key = `${HISTORY_KEY}_${windowType}`;
+  const key = LOCAL_STORAGE_KEYS[windowType];
   const histories = await chrome.storage.local.get(key);
   const history = histories[key] || [];
   history.unshift(record);
@@ -140,7 +133,9 @@ const deleteTabGroup = async () => {
   }
 
   const currentWindow = await chrome.windows.getCurrent();
-  const windowType = currentWindow.incognito ? "incognito" : "normal";
+  const windowType: keyof typeof LOCAL_STORAGE_KEYS = currentWindow.incognito
+    ? "incognito"
+    : "normal";
 
   // タブがタブグループに属していない場合は groupId が -1 になるっぽい
   if (activeTab.groupId === -1) {
@@ -148,13 +143,14 @@ const deleteTabGroup = async () => {
 
     const deletionRecord = {
       timestamp: Date.now(),
-      groupName: NONE_GROUP_NAME,
+      groupName: UNGROUPED_LABEL,
       windowType,
       tabs: [{
         url: activeTab.url ?? "",
         title: activeTab.title ?? "",
       }],
     };
+
     updateDeletionHistory(windowType, deletionRecord);
     return;
   }
@@ -172,11 +168,11 @@ const deleteTabGroup = async () => {
     windowId: currentWindow.id,
   });
   const existingGroup = existingGroups.find((group) => group.id === groupId);
-  const groupName = existingGroup ? existingGroup.title : NONE_GROUP_NAME;
+  const groupName = existingGroup ? existingGroup.title : UNGROUPED_LABEL;
 
   const deletionRecord = {
     timestamp: Date.now(),
-    groupName: groupName ?? NONE_GROUP_NAME,
+    groupName: groupName ?? UNGROUPED_LABEL,
     windowType,
     tabs: groupTabs.map((tab) => ({
       url: tab.url ?? "",
