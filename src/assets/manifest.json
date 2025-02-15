@@ -1,20 +1,27 @@
 {
   "manifest_version": 3,
   "name": "Domain Tab Organizer",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Groups tabs by domain automatically via shortcuts",
   "permissions": [
     "tabs",
     "storage",
     "tabGroups"
   ],
-  "host_permissions": [
-    "<all_urls>"
-  ],
   "background": {
     "service_worker": "background.js"
   },
-  "options_page": "options.html",
+  "options_page": "options-and-popup.html",
+  "action": {
+    "default_title": "Open Options Page",
+    "default_popup": "options-and-popup.html",
+    "default_icon": "icon.png"
+  },
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  },
   "commands": {
     "group-tabs": {
       "suggested_key": {
