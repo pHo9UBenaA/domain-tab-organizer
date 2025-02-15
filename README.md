@@ -6,26 +6,35 @@ workspace organized.
 ## Features
 
 - **Automatic Grouping:**
-  - Your open tabs are automatically grouped by their website domain.
-    This means that tabs from the same site (e.g., google.com) will be kept together in your current window for better organization.
+  - Your open tabs are automatically grouped by their website domain. This means
+    that tabs from the same site (e.g., google.com) will be kept together in
+    your current window for better organization.
 
 - **Keyboard Shortcuts:**
   - Quickly perform actions using keyboard shortcuts:
-    - **Group Tabs:** Press `Ctrl+Shift+U` (or `Command+Shift+U` on Mac) to group all open tabs automatically.
-    - **Delete Group:** Press `Ctrl+E` (or `Command+E` on Mac) to delete the currently active tab group.
+    - **Group Tabs:** Press `Ctrl+Shift+U` (or `Command+Shift+U` on Mac) to
+      group all open tabs automatically.
+    - **Delete Group:** Press `Ctrl+E` (or `Command+E` on Mac) to delete the
+      currently active tab group.
 
 - **Popup/Options Page:**
-  - Access these settings via the extension's Popup or Options page (click the extension icon in Chrome):
+  - Access these settings via the extension's Popup or Options page (click the
+    extension icon in Chrome):
     - **Settings:** Configure your extension preferences.
-    - **Deleted History:** Review the history of tab groups that have been deleted.
-  - Note: While your configuration settings are synchronized across devices, the deleted history is stored only locally on the device.
+    - **Deleted History:** Review the history of tab groups that have been
+      deleted.
+  - Note: While your configuration settings are synchronized across devices, the
+    deleted history is stored only locally on the device.
 
 - **Customizable Options:**
   - Personalize the extension to fit your workflow:
-    - **Group Pinned Tabs:** Option to include or exclude pinned tabs from automatic grouping.
+    - **Group Pinned Tabs:** Option to include or exclude pinned tabs from
+      automatic grouping.
     - **Regroup Tabs:** Option to reorganize tabs that are already grouped.
-    - **Merge Subdomains:** Option to combine related subdomains (e.g., `mail.example.com` and `www.example.com`) into one group.
-    - **Exception Domains:** Specify any websites that should not be grouped automatically.
+    - **Merge Subdomains:** Option to combine related subdomains (e.g.,
+      `mail.example.com` and `www.example.com`) into one group.
+    - **Exception Domains:** Specify any websites that should not be grouped
+      automatically.
 
 ## Important Information
 
