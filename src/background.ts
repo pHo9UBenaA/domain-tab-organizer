@@ -186,7 +186,6 @@ const deleteTabGroup = async () => {
   updateDeletionHistory(windowType, deletionRecord);
 };
 
-// キーボードショートカットのイベントリスナー
 chrome.commands.onCommand.addListener((command: string) => {
   if (command === "group-tabs") {
     groupTabsByDomain();
