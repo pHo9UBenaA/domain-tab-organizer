@@ -59,7 +59,22 @@ const moveTabsToGroup = async (groups: Record<string, number[]>) => {
 };
 
 /**
- * グループ化したタブを左側に寄せたいため、グループ化されていないタブを左側に移動する
+ * 全てのグループをたたむ
+ * 新たに作ったグループか、元々あったものかは区別しない
+ */
+const collapseAllGroup = async (groups: Record<string, number[]>) => {
+  const currentWindow = await chrome.windows.getCurrent();
+  const existingGroups = await chrome.tabGroups.query({
+    windowId: currentWindow.id,
+  });
+
+  for (const group of existingGroups) {
+    chrome.tabGroups.update(group.id, { collapsed: true });
+  }
+};
+
+/**
+ * グループ化したタブを左側に寄せたいため、グループ化されていないタブを右側に移動する
  * グループ化したタブを index: 0 に移動すると、ピン留めされたタブが存在する場合にエラーになるため、グループ化されていないタブを index: 9999 に移動している
  */
 const moveUngroupedTabsToRightSide = async () => {
@@ -110,6 +125,9 @@ const groupTabsByDomain = async () => {
   }
 
   await moveTabsToGroup(groups);
+  if (options.collapseGroup) {
+    await collapseAllGroup(groups);
+  }
   await moveUngroupedTabsToRightSide();
 };
 
