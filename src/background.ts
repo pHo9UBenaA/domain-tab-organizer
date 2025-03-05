@@ -28,8 +28,8 @@ const getGroupName = (url: string, mergeSubdomains: boolean) => {
   }
 };
 
-const getOptions = async () => {
-  return await chrome.storage.sync.get(DEFAULT_OPTIONS);
+const getOptions = () => {
+  return chrome.storage.sync.get(DEFAULT_OPTIONS);
 };
 
 const moveTabsToGroup = async (groups: Record<string, number[]>) => {
@@ -40,21 +40,23 @@ const moveTabsToGroup = async (groups: Record<string, number[]>) => {
 
   for (const groupName in groups) {
     const tabIds = groups[groupName];
+
     // 同じタイトルのグループが既にあるかチェック
     const existingGroup = existingGroups.find((group) =>
       group.title === groupName
     );
+
     if (existingGroup) {
       // 既存グループへタブを追加
-      chrome.tabs.group({ groupId: existingGroup.id, tabIds: tabIds });
-    } else {
-      // 新規グループ化し、グループタイトルを設定
-      chrome.tabs.group({ tabIds: tabIds }, function (newGroupId) {
-        chrome.tabGroups.update(newGroupId, {
-          title: groupName,
-        });
-      });
+      await chrome.tabs.group({ groupId: existingGroup.id, tabIds: tabIds });
+      continue;
     }
+
+    // 新規グループ化し、グループタイトルを設定
+    const newGroupId = await chrome.tabs.group({ tabIds: tabIds });
+    await chrome.tabGroups.update(newGroupId, {
+      title: groupName,
+    });
   }
 };
 
