@@ -62,7 +62,7 @@ const moveTabsToGroup = async (groups: Record<string, number[]>) => {
  * 全てのグループをたたむ
  * 新たに作ったグループか、元々あったものかは区別しない
  */
-const collapseAllGroup = async (groups: Record<string, number[]>) => {
+const collapseAllGroup = async () => {
   const currentWindow = await chrome.windows.getCurrent();
   const existingGroups = await chrome.tabGroups.query({
     windowId: currentWindow.id,
