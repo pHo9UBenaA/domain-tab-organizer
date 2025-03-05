@@ -128,7 +128,7 @@ const groupTabsByDomain = async () => {
 
   await moveTabsToGroup(groups);
   if (options.collapseGroup) {
-    await collapseAllGroup(groups);
+    await collapseAllGroup();
   }
   await moveUngroupedTabsToRightSide();
 };
