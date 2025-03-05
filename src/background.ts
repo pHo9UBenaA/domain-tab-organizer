@@ -28,8 +28,8 @@ const getGroupName = (url: string, mergeSubdomains: boolean) => {
   }
 };
 
-const getOptions = async () => {
-  return await chrome.storage.sync.get(DEFAULT_OPTIONS);
+const getOptions = () => {
+  return chrome.storage.sync.get(DEFAULT_OPTIONS);
 };
 
 const moveTabsToGroup = async (groups: Record<string, number[]>) => {
@@ -40,26 +40,43 @@ const moveTabsToGroup = async (groups: Record<string, number[]>) => {
 
   for (const groupName in groups) {
     const tabIds = groups[groupName];
+
     // 同じタイトルのグループが既にあるかチェック
     const existingGroup = existingGroups.find((group) =>
       group.title === groupName
     );
+
     if (existingGroup) {
       // 既存グループへタブを追加
-      chrome.tabs.group({ groupId: existingGroup.id, tabIds: tabIds });
-    } else {
-      // 新規グループ化し、グループタイトルを設定
-      chrome.tabs.group({ tabIds: tabIds }, function (newGroupId) {
-        chrome.tabGroups.update(newGroupId, {
-          title: groupName,
-        });
-      });
+      await chrome.tabs.group({ groupId: existingGroup.id, tabIds: tabIds });
+      continue;
     }
+
+    // 新規グループ化し、グループタイトルを設定
+    const newGroupId = await chrome.tabs.group({ tabIds: tabIds });
+    await chrome.tabGroups.update(newGroupId, {
+      title: groupName,
+    });
   }
 };
 
 /**
- * グループ化したタブを左側に寄せたいため、グループ化されていないタブを左側に移動する
+ * 全てのグループをたたむ
+ * 新たに作ったグループか、元々あったものかは区別しない
+ */
+const collapseAllGroup = async () => {
+  const currentWindow = await chrome.windows.getCurrent();
+  const existingGroups = await chrome.tabGroups.query({
+    windowId: currentWindow.id,
+  });
+
+  for (const group of existingGroups) {
+    chrome.tabGroups.update(group.id, { collapsed: true });
+  }
+};
+
+/**
+ * グループ化したタブを左側に寄せたいため、グループ化されていないタブを右側に移動する
  * グループ化したタブを index: 0 に移動すると、ピン留めされたタブが存在する場合にエラーになるため、グループ化されていないタブを index: 9999 に移動している
  */
 const moveUngroupedTabsToRightSide = async () => {
@@ -110,6 +127,9 @@ const groupTabsByDomain = async () => {
   }
 
   await moveTabsToGroup(groups);
+  if (options.collapseGroup) {
+    await collapseAllGroup();
+  }
   await moveUngroupedTabsToRightSide();
 };
 

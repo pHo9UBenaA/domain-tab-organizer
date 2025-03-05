@@ -15,6 +15,10 @@ const mergeSubdomainsElement = <HTMLInputElement> document.getElementById(
   "mergeSubdomains",
 );
 
+const collapseGroupElement = <HTMLInputElement> document.getElementById(
+  "collapseGroup",
+);
+
 const domainExceptionsElement = <HTMLTextAreaElement> document.getElementById(
   "domainExceptions",
 );
@@ -32,6 +36,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if (mergeSubdomainsElement) {
     mergeSubdomainsElement.checked = data.mergeSubdomains;
+  }
+
+  if (collapseGroupElement) {
+    collapseGroupElement.checked = data.collapseGroup;
   }
 
   if (domainExceptionsElement) {
@@ -135,6 +143,7 @@ document.getElementById("optionsForm")?.addEventListener(
       groupPinned: groupPinnedElement?.checked,
       regroupExisting: regroupExistingElement?.checked,
       mergeSubdomains: mergeSubdomainsElement?.checked,
+      collapseGroup: collapseGroupElement?.checked,
       domainExceptions: exceptionsArray,
     };
 
