@@ -7,6 +7,7 @@ const DEFAULT_OPTIONS = {
   groupPinned: false, // ピン留めタブはグループ化しない（デフォルト）
   regroupExisting: false, // 既存のグループはそのままにする（デフォルト）
   mergeSubdomains: false, // サブドメインをマージしない（デフォルト）
+  collapseGroup: false, // グループ化した際にグループを畳み込まない（デフォルト）
   domainExceptions: [], // 例外ドメイン
 } as const;
 

@@ -33,6 +33,7 @@ workspace organized.
     - **Regroup Tabs:** Option to reorganize tabs that are already grouped.
     - **Merge Subdomains:** Option to combine related subdomains (e.g.,
       `mail.example.com` and `www.example.com`) into one group.
+    - **Collapse Groups:** Option to collapse all groups.
     - **Exception Domains:** Specify any websites that should not be grouped
       automatically.
 
